@@ -99,7 +99,7 @@ curl -X POST "https://api.aisa.one/apis/v1/twitter/user_login_v3" \
 curl -X POST "https://api.aisa.one/apis/v1/twitter/send_tweet_v3" \
   -H "Authorization: Bearer $AISA_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"user_name":"myaccount","text":"Hello from AIsa!"}'
+  -d '{"user_name":"myaccount","text":"Hello from OpenClaw!"}'
 
 # Like / Retweet
 curl -X POST "https://api.aisa.one/apis/v1/twitter/like_tweet_v3" \
@@ -128,7 +128,7 @@ curl -X POST "https://api.aisa.one/apis/v1/scholar/search/smart?query=machine+le
 
 ```bash
 # Company news by ticker
-curl "https://api.aisa.one/apis/v1/financial/news/company?ticker=AAPL&limit=10" \
+curl "https://api.aisa.one/apis/v1/financial/news?ticker=AAPL&limit=10" \
   -H "Authorization: Bearer $AISA_API_KEY"
 ```
 

@@ -2,7 +2,7 @@
 
 > **The definitive starting point for autonomous agents. Powered by AIsa.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![OpenClaw Compatible](https://img.shields.io/badge/OpenClaw-Compatible-brightgreen.svg)](https://openclaw.ai)
 
 ---
@@ -133,7 +133,7 @@ curl -X POST "https://api.aisa.one/apis/v1/twitter/user_login_v3" \
 curl -X POST "https://api.aisa.one/apis/v1/twitter/send_tweet_v3" \
   -H "Authorization: Bearer $AISA_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"user_name":"myaccount","text":"Hello from OpenClaw!"}'
+  -d '{"user_name":"myaccount","text":"Hello from OpenClaw Starter Kit!"}'
 ```
 
 ### Web & Scholar Search
@@ -241,7 +241,7 @@ Contributions are welcome! Please read our contributing guidelines before submit
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+Apache 2.0 License - see [LICENSE](../LICENSE) for details.
 
 ---
 
