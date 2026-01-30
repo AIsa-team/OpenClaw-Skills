@@ -346,7 +346,7 @@ Examples:
     
     result = None
     
-    # Execute the appropriate command
+    # execute the appropriate command
     if args.command == "twitter":
         if args.action == "user-info":
             result = client.twitter_user_info(args.username)
