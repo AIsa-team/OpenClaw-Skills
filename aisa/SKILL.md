@@ -207,4 +207,4 @@ Common error codes:
 
 ## Full API Reference
 
-See [references/api-reference.md](references/api-reference.md) for complete endpoint documentation.
+See [API Reference](https://github.com/AIsa-team/Openclaw-Starter-Kit/blob/main/skills/aisa/references/api-reference.md) for complete endpoint documentation.
