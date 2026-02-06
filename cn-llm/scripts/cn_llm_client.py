@@ -11,12 +11,18 @@ Usage:
 """
 
 import argparse
+import io
 import json
 import os
 import sys
 import urllib.request
 import urllib.error
 from typing import Any, Dict, Generator, List, Optional
+
+# Ensure UTF-8 output on Windows
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 
 class CNLLMClient:
