@@ -94,7 +94,7 @@ class AIsaClient:
     
     def twitter_user_tweets(self, username: str, count: int = 20) -> Dict[str, Any]:
         """Get tweets from a specific user."""
-        return self._request("GET", "/twitter/user/user_last_tweet", params={"userName": username})
+        return self._request("GET", "/twitter/user/last_tweets", params={"userName": username})
     
     def twitter_search(self, query: str, query_type: str = "Latest") -> Dict[str, Any]:
         """Search for tweets matching a query (Advanced Search)."""
@@ -105,7 +105,7 @@ class AIsaClient:
     
     def twitter_tweet_detail(self, tweet_ids: str) -> Dict[str, Any]:
         """Get detailed information about tweets by IDs (comma-separated)."""
-        return self._request("GET", "/twitter/tweet/tweetById", params={"tweet_ids": tweet_ids})
+        return self._request("GET", "/twitter/tweets", params={"tweet_ids": tweet_ids})
     
     def twitter_trends(self, woeid: int = 1) -> Dict[str, Any]:
         """Get current Twitter trending topics by WOEID (1 = worldwide)."""
@@ -113,12 +113,32 @@ class AIsaClient:
     
     def twitter_user_search(self, keyword: str) -> Dict[str, Any]:
         """Search for Twitter users by keyword."""
-        return self._request("GET", "/twitter/user/search_user", params={"keyword": keyword})
+        return self._request("GET", "/twitter/user/search", params={"query": keyword})
     
     # ==================== Twitter Post APIs (V3 - requires login) ====================
-    
-    def twitter_login(self, username: str, email: str, password: str, proxy: str, totp_code: str = None) -> Dict[str, Any]:
-        """Login to Twitter account (V3). Required before posting."""
+
+    def twitter_login(self, username: str, email: str = None, password: str = None, proxy: str = None, totp_code: str = None) -> Dict[str, Any]:
+        """Login to Twitter account (V3). Required before posting.
+
+        Credentials are read from environment variables for security:
+          - TWITTER_EMAIL: Account email
+          - TWITTER_PASSWORD: Account password
+          - TWITTER_PROXY: Proxy URL
+        Parameters can override env vars if provided directly.
+
+        WARNING: Credentials are sent to the AIsa API server for authentication.
+        """
+        email = email or os.environ.get("TWITTER_EMAIL")
+        password = password or os.environ.get("TWITTER_PASSWORD")
+        proxy = proxy or os.environ.get("TWITTER_PROXY")
+
+        if not email:
+            raise ValueError("Twitter email is required. Set TWITTER_EMAIL environment variable.")
+        if not password:
+            raise ValueError("Twitter password is required. Set TWITTER_PASSWORD environment variable.")
+        if not proxy:
+            raise ValueError("Proxy URL is required. Set TWITTER_PROXY environment variable.")
+
         data = {
             "user_name": username,
             "email": email,
@@ -184,7 +204,7 @@ class AIsaClient:
     
     def search_smart(self, query: str, max_results: int = 10) -> Dict[str, Any]:
         """Perform intelligent search combining web and academic results."""
-        return self._request("POST", "/scholar/search/smart", params={
+        return self._request("POST", "/scholar/search/mixed", params={
             "query": query,
             "max_num_results": max_results
         })
@@ -290,9 +310,9 @@ Examples:
     # twitter login (V3)
     login = twitter_sub.add_parser("login", help="Login to Twitter account (required for posting)")
     login.add_argument("--username", "-u", required=True, help="Twitter username")
-    login.add_argument("--email", "-e", required=True, help="Account email")
-    login.add_argument("--password", "-p", required=True, help="Account password")
-    login.add_argument("--proxy", required=True, help="Proxy URL (http://user:pass@ip:port)")
+    login.add_argument("--email", "-e", help="Account email (or set TWITTER_EMAIL env var)")
+    login.add_argument("--password", "-p", help="Account password (or set TWITTER_PASSWORD env var)")
+    login.add_argument("--proxy", help="Proxy URL (or set TWITTER_PROXY env var)")
     login.add_argument("--totp", help="TOTP 2FA secret (recommended)")
     
     # twitter account (check login status)
@@ -391,7 +411,11 @@ Examples:
             result = client.twitter_user_search(args.keyword)
         # V3 APIs (require login)
         elif args.action == "login":
-            result = client.twitter_login(args.username, args.email, args.password, args.proxy, args.totp)
+            try:
+                result = client.twitter_login(args.username, args.email, args.password, args.proxy, args.totp)
+            except ValueError as e:
+                print(json.dumps({"success": False, "error": {"code": "CREDENTIAL_ERROR", "message": str(e)}}))
+                sys.exit(1)
         elif args.action == "account":
             result = client.twitter_get_account(args.username)
         elif args.action == "post":

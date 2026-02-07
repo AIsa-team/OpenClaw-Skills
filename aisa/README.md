@@ -122,12 +122,19 @@ curl "https://api.aisa.one/apis/v1/twitter/trends?woeid=1" \
 
 ### Twitter/X - Write (Requires Login)
 
+> **Security Notice**: Credentials are read from environment variables to prevent exposure in shell history, process lists, or logs.
+
 ```bash
+# Set credentials via environment variables
+export TWITTER_EMAIL="your-email"
+export TWITTER_PASSWORD="your-password"
+export TWITTER_PROXY="http://ip:port"
+
 # Step 1: Login
 curl -X POST "https://api.aisa.one/apis/v1/twitter/user_login_v3" \
   -H "Authorization: Bearer $AISA_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"user_name":"myaccount","email":"me@example.com","password":"xxx","proxy":"http://user:pass@ip:port"}'
+  -d "{\"user_name\":\"myaccount\",\"email\":\"$TWITTER_EMAIL\",\"password\":\"$TWITTER_PASSWORD\",\"proxy\":\"$TWITTER_PROXY\"}"
 
 # Step 2: Post tweet
 curl -X POST "https://api.aisa.one/apis/v1/twitter/send_tweet_v3" \
@@ -170,8 +177,8 @@ python scripts/aisa_client.py twitter tweets --username <username>
 python scripts/aisa_client.py twitter search --query <query>
 python scripts/aisa_client.py twitter trends
 
-# Twitter Write (login required)
-python scripts/aisa_client.py twitter login --username <u> --email <e> --password <p> --proxy <proxy>
+# Twitter Write (login required - credentials from env vars TWITTER_EMAIL, TWITTER_PASSWORD, TWITTER_PROXY)
+python scripts/aisa_client.py twitter login --username <u>
 python scripts/aisa_client.py twitter post --username <u> --text "Hello!"
 python scripts/aisa_client.py twitter like --username <u> --tweet-id <id>
 

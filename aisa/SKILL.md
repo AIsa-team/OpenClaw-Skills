@@ -86,14 +86,21 @@ curl "https://api.aisa.one/apis/v1/twitter/trends?woeid=1" \
 
 ### Twitter/X Post (Write)
 
-> ⚠️ **Warning**: Posting requires account login. Use responsibly to avoid rate limits or account suspension.
+> **Security Notice**: Posting requires account login. Credentials are read from environment variables to avoid exposure in shell history or logs. Set `TWITTER_EMAIL`, `TWITTER_PASSWORD`, and `TWITTER_PROXY` before using write operations.
+
+> **Warning**: Use responsibly to avoid rate limits or account suspension.
 
 ```bash
+# Set credentials via environment variables (never pass as CLI arguments)
+export TWITTER_EMAIL="your-email"
+export TWITTER_PASSWORD="your-password"
+export TWITTER_PROXY="http://ip:port"
+
 # Step 1: Login first (async, check status after)
 curl -X POST "https://api.aisa.one/apis/v1/twitter/user_login_v3" \
   -H "Authorization: Bearer $AISA_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"user_name":"myaccount","email":"me@example.com","password":"xxx","proxy":"http://user:pass@ip:port"}'
+  -d "{\"user_name\":\"myaccount\",\"email\":\"$TWITTER_EMAIL\",\"password\":\"$TWITTER_PASSWORD\",\"proxy\":\"$TWITTER_PROXY\"}"
 
 # Step 2: Send tweet
 curl -X POST "https://api.aisa.one/apis/v1/twitter/send_tweet_v3" \
@@ -151,8 +158,8 @@ python3 {baseDir}/scripts/aisa_client.py twitter user-info --username elonmusk
 python3 {baseDir}/scripts/aisa_client.py twitter search --query "AI agents"
 python3 {baseDir}/scripts/aisa_client.py twitter trends --woeid 1
 
-# Twitter Write (requires login first)
-python3 {baseDir}/scripts/aisa_client.py twitter login --username myaccount --email me@example.com --password xxx --proxy "http://user:pass@ip:port"
+# Twitter Write (requires login first, credentials from env vars)
+python3 {baseDir}/scripts/aisa_client.py twitter login --username myaccount
 python3 {baseDir}/scripts/aisa_client.py twitter post --username myaccount --text "Hello!"
 python3 {baseDir}/scripts/aisa_client.py twitter like --username myaccount --tweet-id 1234567890
 

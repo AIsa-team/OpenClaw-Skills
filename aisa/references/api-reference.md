@@ -40,7 +40,7 @@ Advanced search for tweets.
 | queryType | string | Yes | "Latest" or "Top" |
 | cursor | string | No | Pagination cursor |
 
-### GET /twitter/user/user_last_tweet
+### GET /twitter/user/last_tweets
 
 Get user's recent tweets.
 
@@ -48,7 +48,7 @@ Get user's recent tweets.
 |-----------|------|----------|-------------|
 | userName | string | Yes | Twitter username |
 
-### GET /twitter/tweet/tweetById
+### GET /twitter/tweets
 
 Get tweets by IDs.
 
@@ -65,13 +65,13 @@ Get trending topics by WOEID.
 | woeid | integer | Yes | WOEID (1 = worldwide) |
 | count | integer | No | Number of trends (default 30) |
 
-### GET /twitter/user/search_user
+### GET /twitter/user/search
 
 Search for users by keyword.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| keyword | string | Yes | Search keyword |
+| query | string | Yes | Search keyword |
 
 ---
 
