@@ -43,21 +43,6 @@ export AISA_API_KEY="your-api-key"
 
 ---
 
-## Repository Structure
-
-```
-OpenClaw-Skills/
-├── README.md           ← You are here
-├── LICENSE
-└── aisa/               ← OpenClaw Starter Kit (AIsa integration)
-    ├── README.md
-    ├── SKILL.md
-    ├── scripts/
-    └── references/
-```
-
----
-
 ## Adding New Skills
 
 Want to contribute a skill? Each skill should include:

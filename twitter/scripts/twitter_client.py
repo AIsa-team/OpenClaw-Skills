@@ -83,11 +83,10 @@ class TwitterClient:
         }
 
         request_data = None
-        if data:
-            request_data = json.dumps(data).encode("utf-8")
-
-        if method == "POST" and request_data is None:
-            request_data = b"{}"
+        if method == "POST":
+            body = data.copy() if data else {}
+            body.setdefault("aisa_api_key", self.api_key)
+            request_data = json.dumps(body).encode("utf-8")
 
         req = urllib.request.Request(url, data=request_data, headers=headers, method=method)
 
