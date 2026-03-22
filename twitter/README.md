@@ -26,7 +26,6 @@ python scripts/twitter_client.py post --text "Hello"
 - **Read**: User info, tweets, search, trends, followers, lists, communities, Spaces, etc.
 - **Post**: Browser OAuth via `POST /twitter/auth_twitter` and `POST /twitter/post_twitter` with `aisa_api_key` in the JSON body (no cookies, no proxy, no password).
 
-Cookie-based actions (like, retweet, DM, follow via `login_cookies`) are **removed** from this skill.
 
 ## Get API Key
 
