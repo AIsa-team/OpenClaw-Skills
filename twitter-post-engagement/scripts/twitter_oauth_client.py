@@ -4,17 +4,19 @@ Twitter relay client for local OAuth authorization and tweet publishing.
 
 Commands:
     python twitter_oauth_client.py authorize [--callback-url <url>] [--open-browser]
-    python twitter_oauth_client.py post --text "Hello" [--media-id <id> ...]
+    python twitter_oauth_client.py post --text "Hello" [--media-id <id> ...] [--in-reply-to-tweet-id <id>]
     python twitter_oauth_client.py status
 """
 
 import argparse
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import unicodedata
 import webbrowser
 from typing import Any, Dict, Optional
 
@@ -86,6 +88,113 @@ def send_json_request(url: str, payload: Dict[str, Any], timeout: int) -> Dict[s
         }
 
 
+TWITTER_MAX_WEIGHT = 280
+TWITTER_URL_WEIGHT = 23
+URL_PATTERN = re.compile(r"https?://\S+", re.IGNORECASE)
+
+
+def twitter_char_weight(ch: str) -> int:
+    if unicodedata.east_asian_width(ch) in {"W", "F"}:
+        return 2
+    if unicodedata.category(ch).startswith("M"):
+        return 0
+    return 1
+
+
+def twitter_weight_len(text: str) -> int:
+    total = 0
+    idx = 0
+    for matched in URL_PATTERN.finditer(text):
+        start, end = matched.span()
+        while idx < start:
+            total += twitter_char_weight(text[idx])
+            idx += 1
+        total += TWITTER_URL_WEIGHT
+        idx = end
+
+    while idx < len(text):
+        total += twitter_char_weight(text[idx])
+        idx += 1
+    return total
+
+
+def split_by_twitter_weight(text: str, max_len: int) -> list[str]:
+    parts: list[str] = []
+    current = ""
+    for ch in text:
+        candidate = current + ch
+        if twitter_weight_len(candidate) <= max_len:
+            current = candidate
+            continue
+        if current:
+            parts.append(current)
+        current = ch
+    if current:
+        parts.append(current)
+    return parts
+
+
+def split_text_for_twitter(text: str, max_len: int = TWITTER_MAX_WEIGHT) -> list[str]:
+    normalized = text.strip()
+    if not normalized:
+        return []
+    if twitter_weight_len(normalized) <= max_len:
+        return [normalized]
+
+    words = normalized.split()
+    chunks: list[str] = []
+    current = ""
+    for word in words:
+        if twitter_weight_len(word) > max_len:
+            if current:
+                chunks.append(current)
+                current = ""
+            chunks.extend(split_by_twitter_weight(word, max_len))
+            continue
+
+        candidate = word if not current else f"{current} {word}"
+        if twitter_weight_len(candidate) <= max_len:
+            current = candidate
+        else:
+            chunks.append(current)
+            current = word
+
+    if current:
+        chunks.append(current)
+    return chunks
+
+
+def extract_tweet_id(result: Dict[str, Any]) -> Optional[str]:
+    data = result.get("data") if isinstance(result, dict) else None
+    if not isinstance(data, dict):
+        return None
+    tweet_id = data.get("tweet_id")
+    return str(tweet_id) if tweet_id else None
+
+
+def post_single_tweet(
+    config: Dict[str, Any],
+    *,
+    content: str,
+    media_ids: Optional[list[str]] = None,
+    in_reply_to_tweet_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    payload: Dict[str, Any] = {
+        "aisa_api_key": config["aisa_api_key"],
+        "content": content,
+    }
+    if media_ids:
+        payload["media_ids"] = media_ids
+    if in_reply_to_tweet_id:
+        payload["in_reply_to_tweet_id"] = in_reply_to_tweet_id
+
+    return send_json_request(
+        f"{config['base_url']}/twitter/post_twitter",
+        payload,
+        timeout=config["timeout"],
+    )
+
+
 def command_authorize(args: argparse.Namespace) -> None:
     config = load_config(args)
     payload = {"aisa_api_key": config["aisa_api_key"], "callback_url": config["callback_url"]}
@@ -119,29 +228,69 @@ def command_authorize(args: argparse.Namespace) -> None:
 
 def command_post(args: argparse.Namespace) -> None:
     config = load_config(args)
-    payload: Dict[str, Any] = {
-        "aisa_api_key": config["aisa_api_key"],
-        "content": args.text,
-    }
-    if args.media_id:
-        payload["media_ids"] = args.media_id
+    chunks = split_text_for_twitter(args.text)
+    if not chunks:
+        print(json.dumps({"ok": False, "error": "Post content must not be empty."}, indent=2, ensure_ascii=False))
+        sys.exit(1)
 
-    result = send_json_request(
-        f"{config['base_url']}/twitter/post_twitter",
-        payload,
-        timeout=config["timeout"],
-    )
+    should_thread = len(chunks) > 1
+    previous_tweet_id = args.in_reply_to_tweet_id
+    publish_results = []
+
+    for index, chunk in enumerate(chunks):
+        media_ids = args.media_id if index == 0 else None
+        result = post_single_tweet(
+            config,
+            content=chunk,
+            media_ids=media_ids,
+            in_reply_to_tweet_id=previous_tweet_id,
+        )
+        publish_results.append(
+            {
+                "index": index + 1,
+                "content": chunk,
+                "in_reply_to_tweet_id": previous_tweet_id,
+                "result": result,
+            }
+        )
+        if result.get("ok") is False or result.get("code") != 200:
+            output = {
+                "ok": False,
+                "relay_base_url": config["base_url"],
+                "aisa_api_key": config["aisa_api_key"],
+                "is_thread": should_thread,
+                "total_chunks": len(chunks),
+                "failed_at_chunk": index + 1,
+                "results": publish_results,
+            }
+            print(json.dumps(output, indent=2, ensure_ascii=False))
+            sys.exit(1)
+
+        latest_tweet_id = extract_tweet_id(result)
+        if not latest_tweet_id:
+            output = {
+                "ok": False,
+                "relay_base_url": config["base_url"],
+                "aisa_api_key": config["aisa_api_key"],
+                "is_thread": should_thread,
+                "total_chunks": len(chunks),
+                "failed_at_chunk": index + 1,
+                "error": "Missing tweet_id in relay response.",
+                "results": publish_results,
+            }
+            print(json.dumps(output, indent=2, ensure_ascii=False))
+            sys.exit(1)
+        previous_tweet_id = latest_tweet_id
+
     output = {
-        "ok": result.get("code") == 200,
+        "ok": True,
         "relay_base_url": config["base_url"],
         "aisa_api_key": config["aisa_api_key"],
-        "raw_response": result,
+        "is_thread": should_thread,
+        "total_chunks": len(chunks),
+        "results": publish_results,
     }
-    if result.get("ok") is False:
-        output["ok"] = False
     print(json.dumps(output, indent=2, ensure_ascii=False))
-    if not output["ok"]:
-        sys.exit(1)
 
 
 def command_status(args: argparse.Namespace) -> None:
@@ -179,6 +328,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--media-id",
         action="append",
         help="Media ID to attach. Repeat the flag to send multiple media IDs.",
+    )
+    post.add_argument(
+        "--in-reply-to-tweet-id",
+        help="Optional parent tweet ID. Useful when replying or continuing an existing thread.",
     )
     post.set_defaults(func=command_post)
 

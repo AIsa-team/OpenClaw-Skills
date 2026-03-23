@@ -49,6 +49,9 @@ python3 {baseDir}/scripts/twitter_oauth_client.py authorize --open-browser
 # Publish a post
 python3 {baseDir}/scripts/twitter_oauth_client.py post --text "Hello from Twitter OAuth"
 
+# Reply to a specific tweet
+python3 {baseDir}/scripts/twitter_oauth_client.py post --text "Reply content" --in-reply-to-tweet-id "1888888888888888888"
+
 ```
 
 ## Core Behavior
@@ -73,7 +76,9 @@ Request an authorization link for the current user context.
 
 ### `post`
 
-Publish a post. If the current user is not authorized yet, the caller should guide the user through authorization and retry posting afterward.
+Publish a post. If content exceeds 280 characters, the client automatically splits it and publishes a chained thread where each follow-up tweet replies to the previous tweet using `in_reply_to_tweet_id`.
+
+If the current user is not authorized yet, the caller should guide the user through authorization and retry posting afterward.
 
 ## Agent Instructions
 
