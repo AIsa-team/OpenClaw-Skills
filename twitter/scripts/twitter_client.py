@@ -14,7 +14,7 @@ Usage (read):
 
 Usage (OAuth post):
     python twitter_client.py authorize [--open-browser]
-    python twitter_client.py post --text "Hello" [--media-id <id> ...]
+    python twitter_client.py post --text "Hello" [--media-id <id> ...] [--type <quote|reply>]
     python twitter_client.py status
 """
 
@@ -138,11 +138,13 @@ class TwitterClient:
         media_ids: Optional[List[str]],
         timeout: int,
         quote_tweet_id: Optional[str] = None,
+        post_type: str = "quote",
     ) -> Dict[str, Any]:
         """Publish a post via OAuth-backed relay."""
         payload: Dict[str, Any] = {
             "aisa_api_key": self.api_key,
             "content": text,
+            "type": post_type,
         }
         if media_ids:
             payload["media_ids"] = media_ids
@@ -368,6 +370,7 @@ def publish_chunks(
     timeout: int,
     media_ids: Optional[List[str]] = None,
     initial_quote_tweet_id: Optional[str] = None,
+    post_type: str = "quote",
 ) -> Dict[str, Any]:
     should_thread = len(chunks) > 1
     previous_tweet_id = initial_quote_tweet_id
@@ -380,6 +383,7 @@ def publish_chunks(
             current_media_ids,
             timeout,
             quote_tweet_id=previous_tweet_id,
+            post_type=post_type,
         )
         publish_results.append(
             {
@@ -454,7 +458,7 @@ def command_post(client: TwitterClient, args: argparse.Namespace) -> None:
         chunks,
         timeout,
         media_ids=getattr(args, "media_id", None),
-        initial_quote_tweet_id=getattr(args, "quote_tweet_id", None),
+        post_type=args.post_type,
     )
     print(json.dumps(output, indent=2, ensure_ascii=False))
     if not output["ok"]:
@@ -605,8 +609,11 @@ def main():
         help="Media ID to attach (repeat for multiple)",
     )
     p.add_argument(
-        "--quote_tweet_id",
-        help="Optional tweet ID to quote. When long content is split, later chunks quote the previously posted tweet.",
+        "--type",
+        dest="post_type",
+        choices=["quote", "reply"],
+        default="quote",
+        help="Post type. Defaults to quote. Only use reply when the user explicitly asks for a reply.",
     )
     p.set_defaults(_handler="post")
 
