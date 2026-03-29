@@ -26,6 +26,11 @@ from typing import Any, Dict, Optional
 DEFAULT_TIMEOUT = 30
 DEFAULT_BASE_URL = "https://api.aisa.one/apis/v1"
 # DEFAULT_BASE_URL = "https://prebuccal-krysta-prelusorily.ngrok-free.dev"
+DEFAULT_CHROME_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/136.0.0.0 Safari/537.36"
+)
 
 
 
@@ -74,6 +79,7 @@ def parse_response_body(raw: str, status: Any, default_message: str) -> Dict[str
 def build_auth_headers(aisa_api_key: str, extra_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
     headers = {
         "Authorization": f"Bearer {aisa_api_key}",
+        "User-Agent": DEFAULT_CHROME_USER_AGENT,
     }
     if extra_headers:
         headers.update(extra_headers)
