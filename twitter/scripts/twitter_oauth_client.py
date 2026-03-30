@@ -24,6 +24,7 @@ from typing import Any, Dict, Optional
 
 
 DEFAULT_TIMEOUT = 30
+MEDIA_UPLOAD_TIMEOUT = 120
 DEFAULT_BASE_URL = "https://api.aisa.one/apis/v1"
 DEFAULT_CHROME_USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -196,6 +197,81 @@ def send_multipart_request(
         }
 
 
+# ---------------------------------------------------------------------------
+# Media upload
+# ---------------------------------------------------------------------------
+
+def upload_single_media(
+    config: Dict[str, Any],
+    media_file: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Upload a single media file to the relay and return the parsed response.
+
+    The relay endpoint ``/twitter/upload_media`` accepts a multipart request
+    with the ``aisa_api_key`` text field and a single ``media_file`` binary
+    part.  On success the response contains a ``media_id`` that can later be
+    passed to ``/twitter/post_twitter``.
+    """
+    endpoint = f"{config['base_url']}/twitter/upload_media"
+    fields: Dict[str, Any] = {
+        "aisa_api_key": config["aisa_api_key"],
+    }
+    # The relay expects the file part under the field name "media_file".
+    file_entry = {
+        "field_name": "media_file",
+        "filename": media_file["filename"],
+        "content_type": media_file["content_type"],
+        "content": media_file["content"],
+    }
+    timeout = max(config["timeout"], MEDIA_UPLOAD_TIMEOUT)
+    return send_multipart_request(endpoint, fields, [file_entry], timeout=timeout, aisa_api_key=config["aisa_api_key"])
+
+
+def extract_media_id(result: Dict[str, Any]) -> Optional[str]:
+    """Extract the media_id from an upload_media response."""
+    if isinstance(result, dict):
+        # Try common response shapes:
+        #   {"code": 200, "data": {"media_id": "..."}}
+        #   {"media_id": "..."}
+        #   {"data": {"media_id_string": "..."}}
+        data = result.get("data") if isinstance(result.get("data"), dict) else result
+        for key in ("media_id", "media_id_string"):
+            value = data.get(key)
+            if value:
+                return str(value)
+    return None
+
+
+def upload_media_files(
+    config: Dict[str, Any],
+    media_files: list[Dict[str, Any]],
+) -> list[str]:
+    """Upload all media files and return a list of media IDs.
+
+    Raises ``RelayConfigError`` if any upload fails or does not return a
+    ``media_id``.
+    """
+    media_ids: list[str] = []
+    for media_file in media_files:
+        result = upload_single_media(config, media_file)
+
+        if result.get("ok") is False:
+            raise RelayConfigError(
+                f"Media upload failed for {media_file['filename']}: "
+                f"{json.dumps(result, ensure_ascii=False)}"
+            )
+
+        media_id = extract_media_id(result)
+        if not media_id:
+            raise RelayConfigError(
+                f"Media upload for {media_file['filename']} did not return a media_id. "
+                f"Response: {json.dumps(result, ensure_ascii=False)}"
+            )
+        media_ids.append(media_id)
+
+    return media_ids
+
+
 TWITTER_MAX_WEIGHT = 280
 TWITTER_URL_WEIGHT = 23
 URL_PATTERN = re.compile(r"https?://\S+", re.IGNORECASE)
@@ -309,7 +385,6 @@ def publish_chunks(
     config: Dict[str, Any],
     chunks: list[str],
     media_ids: Optional[list[str]] = None,
-    media_files: Optional[list[Dict[str, Any]]] = None,
     initial_parent_tweet_id: Optional[str] = None,
     post_type: str = "quote",
 ) -> Dict[str, Any]:
@@ -319,12 +394,10 @@ def publish_chunks(
 
     for index, chunk in enumerate(chunks):
         current_media_ids = media_ids if index == 0 and media_ids else None
-        current_media_files = media_files if index == 0 and media_files else None
         result = post_single_tweet(
             config,
             content=chunk,
             media_ids=current_media_ids,
-            media_files=current_media_files,
             parent_tweet_id=previous_tweet_id,
             post_type=post_type,
         )
@@ -373,7 +446,6 @@ def post_single_tweet(
     *,
     content: Optional[str] = None,
     media_ids: Optional[list[str]] = None,
-    media_files: Optional[list[Dict[str, Any]]] = None,
     parent_tweet_id: Optional[str] = None,
     post_type: Optional[str] = None,
 ) -> Dict[str, Any]:
@@ -391,14 +463,6 @@ def post_single_tweet(
         payload[parent_key] = parent_tweet_id
 
     endpoint = f"{config['base_url']}/twitter/post_twitter"
-    if media_files:
-        return send_multipart_request(
-            endpoint,
-            payload,
-            media_files,
-            timeout=config["timeout"],
-            aisa_api_key=config["aisa_api_key"],
-        )
     return send_json_request(
         endpoint,
         payload,
@@ -440,7 +504,7 @@ def load_media_files(paths: Optional[list[str]]) -> list[Dict[str, Any]]:
 
         media_files.append(
             {
-                "field_name": "media_files",
+                "field_name": "media_file",
                 "filename": os.path.basename(resolved_path),
                 "content_type": mime_type,
                 "content": content,
@@ -502,6 +566,11 @@ def command_post(args: argparse.Namespace) -> None:
         )
         sys.exit(1)
 
+    # ---- Upload local media files first to obtain media IDs ----
+    if media_files:
+        uploaded_ids = upload_media_files(config, media_files)
+        media_ids = list(media_ids) + uploaded_ids
+
     if args.type == "quote":
         if args.in_reply_to_tweet_id:
             raise RelayConfigError(
@@ -524,8 +593,7 @@ def command_post(args: argparse.Namespace) -> None:
     output = publish_chunks(
         config,
         chunks,
-        media_ids=media_ids,
-        media_files=media_files,
+        media_ids=media_ids if media_ids else None,
         post_type=effective_post_type,
         initial_parent_tweet_id=initial_parent_tweet_id,
     )
@@ -542,11 +610,17 @@ def command_status(args: argparse.Namespace) -> None:
         "aisa_api_key": config["aisa_api_key"],
         "timeout": config["timeout"],
         "supported_commands": ["authorize", "post", "status"],
-        "supported_endpoints": ["/twitter/auth_twitter", "/twitter/post_twitter"],
+        "supported_endpoints": [
+            "/twitter/auth_twitter",
+            "/twitter/upload_media",
+            "/twitter/post_twitter",
+        ],
         "media_upload": {
-            "field_name": "media_files",
+            "upload_endpoint": "/twitter/upload_media",
+            "field_name": "media_file",
             "transport": "multipart/form-data",
             "supported_media_types": ["image/*", "video/*"],
+            "flow": "Upload file to /twitter/upload_media -> receive media_id -> pass media_ids to /twitter/post_twitter",
         },
     }
     print(json.dumps(response, indent=2, ensure_ascii=False))

@@ -89,13 +89,14 @@ When the user drops image/video files into OpenClaw:
 
 1. OpenClaw stores the attachment in the local workspace and provides the workspace file path to the skill.
 2. The skill passes that local path through `--media-file <workspace_path>`.
-3. The Python client reads the local file and sends it to the relay backend as `multipart/form-data`.
-4. The relay backend uploads the media to Twitter/X and then publishes the tweet.
-5. The skill returns the final publish result, including the tweet link or tweet ID when available.
-6. If the user provides only one image, publish with only that single image. Do not duplicate it, infer extra images, or expand it into a multi-image post.
-7. If the user provides media without any text, send a media-only post request. Do not synthesize, inject, or infer caption text.
-8. For a normal single post with no threading context, do not send thread/relationship fields such as `type`.
-9. When the user explicitly wants to quote another tweet, require the original tweet URL, append that URL to the published content, and use it as the quoted target.
+3. The Python client reads the local file and uploads it to the relay's `/twitter/upload_media` endpoint as `multipart/form-data`.
+4. The relay returns a `media_id` for each uploaded file.
+5. The Python client then posts the tweet to `/twitter/post_twitter` as JSON, including the `media_ids` array.
+6. The skill returns the final publish result, including the tweet link or tweet ID when available.
+7. If the user provides only one image, publish with only that single image. Do not duplicate it, infer extra images, or expand it into a multi-image post.
+8. If the user provides media without any text, send a media-only post request. Do not synthesize, inject, or infer caption text.
+9. For a normal single post with no threading context, do not send thread/relationship fields such as `type`.
+10. When the user explicitly wants to quote another tweet, require the original tweet URL, append that URL to the published content, and use it as the quoted target.
 
 ## Commands
 
