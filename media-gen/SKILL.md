@@ -7,23 +7,23 @@ metadata: {"openclaw":{"emoji":"🎬","requires":{"bins":["python3","curl"],"env
 
 # OpenClaw Media Gen 🎬
 
-用 AIsa API 一把钥匙生成**图片**与**视频**：
+Generate **images** and **videos** with a single AIsa API key:
 
-- **图片**：`gemini-3-pro-image-preview`（Gemini GenerateContent）
-- **视频**：`wan2.6-t2v`（通义万相 / Qwen Wan 2.6，异步任务）
+- **Image**: `gemini-3-pro-image-preview` (Gemini GenerateContent)
+- **Video**: `wan2.6-t2v` (Qwen Wan 2.6, async task)
 
-API 文档索引见 [AIsa API Reference](https://docs.aisa.one/reference/)（可从 `https://docs.aisa.one/llms.txt` 找到所有页面）。
+API documentation index: [AIsa API Reference](https://docs.aisa.one/reference/) (all pages can be found at `https://docs.aisa.one/llms.txt`).
 
-## 🔥 你可以做什么
+## 🔥 What You Can Do
 
-### 图片生成（Gemini）
+### Image Generation (Gemini)
 ```
-"生成一张赛博朋克风格的城市夜景，霓虹灯，雨夜，电影感"
+"Generate a cyberpunk-style city nightscape with neon lights, rainy night, cinematic feel"
 ```
 
-### 视频生成（Wan 2.6）
+### Video Generation (Wan 2.6)
 ```
-"用一张参考图生成 5 秒镜头：镜头缓慢推进，风吹动头发，电影感，浅景深"
+"Generate a 5-second shot from a reference image: slow camera push-in, wind blowing through hair, cinematic feel, shallow depth of field"
 ```
 
 ## Quick Start
@@ -41,9 +41,9 @@ export AISA_API_KEY="your-key"
 - Base URL: `https://api.aisa.one/v1`
 - `POST /models/{model}:generateContent`
 
-文档：`google-gemini-chat`（GenerateContent）见 `https://docs.aisa.one/reference/generatecontent`。
+Documentation: `google-gemini-chat` (GenerateContent) at `https://docs.aisa.one/reference/generatecontent`.
 
-### curl 示例（返回 inline_data 时为图片）
+### curl Example (response contains inline_data for images)
 
 ```bash
 curl -X POST "https://api.aisa.one/v1/models/gemini-3-pro-image-preview:generateContent" \
@@ -56,7 +56,7 @@ curl -X POST "https://api.aisa.one/v1/models/gemini-3-pro-image-preview:generate
   }'
 ```
 
-> 说明：该接口的响应中可能出现 `candidates[].parts[].inline_data`（通常包含 base64 数据与 mime 类型）；客户端脚本会自动解析并保存文件。
+> Note: The response from this endpoint may include `candidates[].parts[].inline_data` (typically containing base64 data and a MIME type); the client script will automatically parse and save the file.
 
 ---
 
@@ -66,9 +66,9 @@ curl -X POST "https://api.aisa.one/v1/models/gemini-3-pro-image-preview:generate
 
 - Base URL: `https://api.aisa.one/apis/v1`
 - `POST /services/aigc/video-generation/video-synthesis`
-- Header：`X-DashScope-Async: enable`（必填，异步）
+- Header: `X-DashScope-Async: enable` (required, async)
 
-文档：`video-generation` 见 `https://docs.aisa.one/reference/post_services-aigc-video-generation-video-synthesis`。
+Documentation: `video-generation` at `https://docs.aisa.one/reference/post_services-aigc-video-generation-video-synthesis`.
 
 ```bash
 curl -X POST "https://api.aisa.one/apis/v1/services/aigc/video-generation/video-synthesis" \
@@ -94,7 +94,7 @@ curl -X POST "https://api.aisa.one/apis/v1/services/aigc/video-generation/video-
 
 - `GET /services/aigc/tasks?task_id=...`
 
-文档：`task` 见 `https://docs.aisa.one/reference/get_services-aigc-tasks`。
+Documentation: `task` at `https://docs.aisa.one/reference/get_services-aigc-tasks`.
 
 ```bash
 curl "https://api.aisa.one/apis/v1/services/aigc/tasks?task_id=YOUR_TASK_ID" \
@@ -106,24 +106,23 @@ curl "https://api.aisa.one/apis/v1/services/aigc/tasks?task_id=YOUR_TASK_ID" \
 ## Python Client
 
 ```bash
-# 生成图片（保存到本地文件）
+# Generate image (save to local file)
 python3 {baseDir}/scripts/media_gen_client.py image \
   --prompt "A cute red panda, cinematic lighting" \
   --out "out.png"
 
-# 创建视频任务（需要 img_url）
+# Create video task (requires img_url)
 python3 {baseDir}/scripts/media_gen_client.py video-create \
   --prompt "cinematic close-up, slow push-in" \
   --img-url "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/320px-Cat03.jpg" \
   --duration 5
 
-# 轮询任务状态
+# Poll task status
 python3 {baseDir}/scripts/media_gen_client.py video-status --task-id YOUR_TASK_ID
 
-# 等待直到成功（可选：成功后打印 video_url）
+# Wait until success (optional: print video_url on success)
 python3 {baseDir}/scripts/media_gen_client.py video-wait --task-id YOUR_TASK_ID --poll 10 --timeout 600
 
-# 等待直到成功并自动下载 mp4
+# Wait until success and auto-download mp4
 python3 {baseDir}/scripts/media_gen_client.py video-wait --task-id YOUR_TASK_ID --download --out out.mp4
 ```
-

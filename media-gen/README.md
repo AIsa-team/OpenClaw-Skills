@@ -1,19 +1,19 @@
 ## OpenClaw Media Gen
 
-使用 AIsa API 生成图片与视频：
+Generate images and videos using the AIsa API:
 
-- **Gemini 图片**：`gemini-3-pro-image-preview`（`/v1/models/{model}:generateContent`）
-- **Wan 2.6 视频**：`wan2.6-t2v`（`/apis/v1/services/aigc/...` 异步任务 + 轮询）
+- **Gemini Image**: `gemini-3-pro-image-preview` (`/v1/models/{model}:generateContent`)
+- **Wan 2.6 Video**: `wan2.6-t2v` (`/apis/v1/services/aigc/...` async task + polling)
 
-相关 API 文档索引：[`https://docs.aisa.one/reference/`](https://docs.aisa.one/reference/)
+API documentation index: [`https://docs.aisa.one/reference/`](https://docs.aisa.one/reference/)
 
-### 快速开始
+### Quick Start
 
 ```bash
 export AISA_API_KEY="your-key"
 ```
 
-### 生成图片
+### Generate Image
 
 ```bash
 python scripts/media_gen_client.py image \
@@ -21,7 +21,7 @@ python scripts/media_gen_client.py image \
   --out out.png
 ```
 
-### 生成视频（创建任务 + 轮询）
+### Generate Video (Create Task + Polling)
 
 ```bash
 python scripts/media_gen_client.py video-create \
@@ -35,7 +35,7 @@ python scripts/media_gen_client.py video-wait \
   --timeout 600
 ```
 
-### 自动下载生成的视频（mp4）
+### Auto-download Generated Video (mp4)
 
 ```bash
 python scripts/media_gen_client.py video-wait \
@@ -43,4 +43,3 @@ python scripts/media_gen_client.py video-wait \
   --download \
   --out out.mp4
 ```
-
