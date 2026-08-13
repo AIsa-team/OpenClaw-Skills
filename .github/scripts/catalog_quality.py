@@ -21,6 +21,7 @@ CATEGORY_NAMES = (
     "ai-models",
     "creative",
     "financial",
+    "geo",
     "marketing",
     "search-research",
     "social-media",

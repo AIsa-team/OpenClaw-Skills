@@ -9,7 +9,7 @@ category="${1:-}"
 shift || true
 
 case "$category" in
-  financial|search-research|social-media|ai-models|marketing|creative) ;;
+  financial|search-research|social-media|ai-models|marketing|creative|geo) ;;
   *)
     usage
     echo "Unknown skill category: $category" >&2

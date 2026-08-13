@@ -13,8 +13,9 @@ self-contained skill:
 - `search-research/` — web, academic, Tavily, Perplexity, recent research
 - `social-media/` — Twitter/X and YouTube workflows
 - `ai-models/` — provider setup and LLM routing
-- `marketing/` — SEO and creator discovery
+- `marketing/` — SEO, B2B lead generation, and creator discovery
 - `creative/` — image and video generation
+- `geo/` — generative-engine-optimization / AI-search visibility
 
 Skills are consumed by any [agentskills.io](https://agentskills.io)-
 compatible harness (Claude Code, Claude, OpenCode, Cursor, Codex,

@@ -1,11 +1,12 @@
 # Social Media Skills
 
-Twitter/X intelligence and engagement plus YouTube discovery and SERP research.
+Twitter/X intelligence and engagement, Reddit/Instagram/Pinterest social listening, plus YouTube discovery and SERP research.
 
-This category contains 9 self-contained Agent Skills.
+This category contains 10 self-contained Agent Skills.
 
 | Skill | Description |
 |---|---|
+| [social-listening](./social-listening/) | Monitor public social conversation across Reddit, Instagram, and Pinterest via AIsa Scrape Creators. Search Reddit for a topic, pull a subreddit's recent posts and community stats, read a public Instagram profile snapshot, and scan Pinterest pins for a theme. Use for social listening, brand/topic monitoring, audience research, and trend discovery. |
 | [twitter-autopilot](./twitter-autopilot/) | Searches and reads X (Twitter): profiles, timelines, mentions, followers, tweet search, trends, lists, communities, and Spaces. Publishes posts, likes/unlikes tweets, and follows/unfollows users after the user completes OAuth in the browser. Use when the user asks about Twitter/X data, social listening, posting, or interacting with tweets/users without sharing account passwords. |
 | [aisa-twitter-api](./aisa-twitter-api/) | Twitter/X research, monitoring, watchlists, and OAuth-approved posting through AIsa. Use when: the user needs one flagship Twitter skill for trend tracking, competitor monitoring, timeline analysis, or approved posting without sharing passwords. Supports search, watchlists, relay-based reads, and OAuth-gated text or media posting. |
 | [aisa-twitter-command-center](./aisa-twitter-command-center/) | Search X/Twitter profiles, tweets, trends, lists, communities, and Spaces through the AIsa relay, then support approved posting workflows with OAuth. Use when the user asks for Twitter research, monitoring, or posting without sharing passwords. |

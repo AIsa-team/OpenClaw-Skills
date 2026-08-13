@@ -2,10 +2,11 @@
 
 Web, academic, Tavily, Perplexity, and recent multi-source research workflows.
 
-This category contains 12 self-contained Agent Skills.
+This category contains 13 self-contained Agent Skills.
 
 | Skill | Description |
 |---|---|
+| [competitive-seo](./competitive-seo/) | Live Google SERP rankings, keyword ideas, and search-volume/CPC/competition data via AIsa DataForSEO. See who ranks for a term (organic results + SERP features), expand a seed keyword into ranked ideas with volume, and pull ad economics for a keyword list. Use for SEO audits, competitor rank tracking, keyword research, content-gap analysis, and PPC planning. |
 | [multi-source-search](./multi-source-search/) | Multi-source intelligent search for agents. Retrieval across web, scholar, Tavily, and Perplexity Sonar models. |
 | [multi-search](./multi-search/) | Parallel multi-source search combining Web, Scholar, Smart, and Tavily results with confidence scoring and AI synthesis. Best for comprehensive research requiring cross-source validation. Use when: the user needs web search, research, source discovery, or content extraction. |
 | [smart-search](./smart-search/) | Intelligent hybrid search combining web and academic sources via AIsa Smart Search endpoint. Best when you need both web and scholarly results. Use when: the user needs web search, research, source discovery, or content extraction. |
