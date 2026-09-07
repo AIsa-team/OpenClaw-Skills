@@ -17,7 +17,7 @@ and supporting scripts. One `AISA_API_KEY` covers AIsa-powered skills.
 | [Search & Research](./search-research/) | 12 | Web, academic, Tavily, Perplexity, and recent multi-source research workflows. |
 | [Social Media](./social-media/) | 9 | Twitter/X intelligence and engagement plus YouTube discovery and SERP research. |
 | [AI Models](./ai-models/) | 3 | AIsa provider setup and unified model routing for Chinese and global LLMs. |
-| [Marketing](./marketing/) | 2 | SEO research and creator/KOL discovery workflows. |
+| [Marketing](./marketing/) | 3 | SEO research, article SEO + GEO review, and creator/KOL discovery workflows. |
 | [Creative](./creative/) | 1 | Image and video generation workflows. |
 
 ## Skills
@@ -86,6 +86,7 @@ and supporting scripts. One `AISA_API_KEY` covers AIsa-powered skills.
 | Skill | Description |
 |---|---|
 | [seo-keyword-research](./marketing/seo-keyword-research/) | Use this skill when a user asks for SEO keyword research, keyword discovery, search volume analysis, keyword difficulty, search intent mapping, topic clusters, content opportunities, competitor keyword gaps, or a keyword strategy for a domain, URL, product, market, or seed topic. When a website is provided, crawl and interpret the site first, then use AIsa API access to DataForSEO keyword, SERP, trend, Labs, and OnPage endpoints plus AIsa LLM reasoning to find non-brand keyword opportunities. |
+| [article-seo-geo-review](./marketing/article-seo-geo-review/) | Use this skill when a user wants an article, blog post, landing page draft, or published URL reviewed for SEO and GEO (generative engine optimization, AI search visibility, being cited by AI Overviews, Google AI Mode, ChatGPT, or Perplexity). It runs one pipeline through AIsa APIs — keyword metrics (DataForSEO + SEMrush), live Google SERP and AI Mode, top-ranking competitor pages, content-gap detection, deterministic on-page SEO and GEO checks, AI answer-engine citation checks, LLM rewrite suggestions — and returns a scored Markdown report plus JSON evidence. Trigger phrases include "review this article for SEO", "GEO audit", "will AI cite this", "content gap vs competitors", "SEO scorecard", "/review-article". |
 | [kol-creator-discovery](./marketing/kol-creator-discovery/) | Use this skill when a user needs KOL or influencer research, creator email lookup, similar-creator discovery, outreach-list building, influencer prospecting, or a contact table from TikTok, Instagram, or YouTube profile URLs. It uses AIsa's WaveInflu APIs to find verified creator emails, match similar YouTube or TikTok creators, enrich each recommended profile with contact emails, and return an outreach-ready Markdown table without inventing missing data. |
 
 ### [Creative](./creative/)
@@ -96,6 +97,6 @@ and supporting scripts. One `AISA_API_KEY` covers AIsa-powered skills.
 
 ## Review Note
 
-This catalog contains 42 skills after removing only same-function aliases and repackages.
+This catalog contains 43 skills after removing only same-function aliases and repackages.
 Subset skills are intentionally retained as separate discovery and entry points.
 The merge analysis is in [SKILL_DEDUP_ANALYSIS.md](./SKILL_DEDUP_ANALYSIS.md).

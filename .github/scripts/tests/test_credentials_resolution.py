@@ -38,6 +38,7 @@ TARGETS: list[tuple[str, str, str]] = [
     ("multi-source-search", "search-research/multi-source-search/scripts/search_client.py", "_resolve_aisa_api_key"),
     ("aisa-twitter-api", "social-media/aisa-twitter-api/scripts/twitter_client.py", "_resolve_aisa_api_key"),
     ("aisa-twitter-api-oauth", "social-media/aisa-twitter-api/scripts/twitter_oauth_client.py", "_resolve_aisa_api_key"),
+    ("article-seo-geo-review", "marketing/article-seo-geo-review/scripts/review_article.py", "_resolve_aisa_api_key"),
     ("last30days", "search-research/last30days/scripts/lib/env.py", "_resolve_aisa_api_key"),
 ]
 
@@ -380,7 +381,7 @@ class CredentialResolutionContract(unittest.TestCase):
                     break
 
         clients = {k: v for k, v in bodies.items() if k != "last30days"}
-        self.assertEqual(len(clients), 5, f"expected 5 client copies, got {sorted(clients)}")
+        self.assertEqual(len(clients), 6, f"expected 6 client copies, got {sorted(clients)}")
         self.assertEqual(len(set(clients.values())), 1,
                          "client copies of the resolver have drifted apart")
 
