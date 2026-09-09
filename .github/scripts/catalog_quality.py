@@ -22,6 +22,7 @@ CATEGORY_NAMES = (
     "creative",
     "financial",
     "marketing",
+    "platform",
     "search-research",
     "social-media",
 )

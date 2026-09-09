@@ -6,9 +6,10 @@ with code in this repository.
 ## What this repo is
 
 A catalog of **agent skills** for the AIsa platform (https://aisa.one).
-Top-level directories are business categories, and every immediate child is a
+Top-level directories are categories, and every immediate child is a
 self-contained skill:
 
+- `platform/` — generic AIsa CLI/MCP Skill
 - `financial/` — market data, stock research, portfolios, prediction markets
 - `search-research/` — web, academic, Tavily, Perplexity, recent research
 - `social-media/` — Twitter/X and YouTube workflows

@@ -6,9 +6,10 @@ with a few house-level requirements on top.
 
 ## TL;DR
 
-1. Skill lives in `<category>/<skill-name>/`, where `<category>` is one of
+1. Skills live in `<category>/<skill-name>/`, where `<category>` is one of
    `financial`, `search-research`, `social-media`, `ai-models`, `marketing`,
-   or `creative`.
+   `creative`, or `platform`. The generic AIsa Skill is `platform/aisa/`
+   (slug `aisa`). Do not add extra root-level Skills.
 2. `SKILL.md` frontmatter must be **spec-compliant** (validate with
    [`skills-ref`](https://github.com/agentskills/agentskills/tree/main/skills-ref)
    before merging).
@@ -33,8 +34,10 @@ with a few house-level requirements on top.
     └── ...
 ```
 
-Use the narrowest matching business category. Adding a new top-level category
-requires updating the root README and the corresponding sync workflow.
+Use the narrowest matching category. Adding a new top-level category requires
+updating the root README, `CATEGORY_NAMES`, and the exporter allowlist. Add a
+sync workflow only when a separate category distribution is intended;
+`platform` currently has none. Do not create placeholder publisher workflows.
 
 Directory name rules (enforced by the spec):
 
