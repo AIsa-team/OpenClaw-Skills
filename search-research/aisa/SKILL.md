@@ -43,4 +43,4 @@ If you cannot run commands (not merely “no Bash”), connect native remote **S
 
 ## License
 
-MIT — see [LICENSE](../LICENSE).
+MIT — see [LICENSE](LICENSE).
