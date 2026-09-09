@@ -6,10 +6,10 @@ with code in this repository.
 ## What this repo is
 
 A catalog of **agent skills** for the AIsa platform (https://aisa.one).
-Top-level directories are business categories, and every immediate child is a
-self-contained skill, plus one root-level general Skill:
+Top-level directories are categories, and every immediate child is a
+self-contained skill:
 
-- `aisa/` — the generic AIsa CLI/MCP Skill (not a domain category)
+- `platform/` — generic AIsa CLI/MCP Skill
 - `financial/` — market data, stock research, portfolios, prediction markets
 - `search-research/` — web, academic, Tavily, Perplexity, recent research
 - `social-media/` — Twitter/X and YouTube workflows
@@ -104,7 +104,6 @@ All doc links use **`aisa.one/docs/...`** (never `docs.aisa.one` or
 ```bash
 export AISA_API_KEY="..."
 python3 <category>/<skill>/scripts/<client>.py <subcommand> [--flags]
-# The generic Skill is at aisa/SKILL.md (no category prefix).
 ```
 
 `last30days` is the exception — it's a bash-wrapped Python skill:

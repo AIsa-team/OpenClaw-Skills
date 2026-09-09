@@ -18,17 +18,6 @@ sys.modules[spec.name] = catalog_quality
 spec.loader.exec_module(catalog_quality)
 
 
-def write_root_aisa(root: Path, description: str = "test skill") -> Path:
-    skill = root / catalog_quality.ROOT_SKILL_NAME
-    skill.mkdir(parents=True, exist_ok=True)
-    skill_file = skill / "SKILL.md"
-    skill_file.write_text(
-        f"---\nname: aisa\ndescription: {description}\n---\n# AIsa\n",
-        encoding="utf-8",
-    )
-    return skill_file
-
-
 def write_skill(root: Path, category: str, name: str, description: str = "test skill") -> Path:
     skill = root / category / name
     skill.mkdir(parents=True, exist_ok=True)
@@ -87,18 +76,6 @@ class ChangedScopeTests(unittest.TestCase):
             issues = catalog_quality.collect_changed_issues(root, {doc})
 
         self.assertEqual(issues, {"links:broken:README.md:missing.md"})
-
-    def test_changing_a_root_aisa_helper_runs_that_skill_validator(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            skill_file = write_root_aisa(root, description="")
-            changed = skill_file.parent / "agents" / "openai.yaml"
-            changed.parent.mkdir()
-            changed.write_text('interface:\n  display_name: "AIsa"\n', encoding="utf-8")
-
-            issues = catalog_quality.collect_changed_issues(root, {changed})
-
-        self.assertEqual(issues, {"validator:failed:aisa"})
 
     def test_changing_any_file_in_a_skill_runs_that_skill_validator(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -296,66 +273,6 @@ class GlobalChecksTests(unittest.TestCase):
             issues = catalog_quality.collect_global_issues(root)
 
         self.assertEqual(issues, set())
-
-    def test_accepted_root_aisa_is_not_a_structure_error(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            for category in catalog_quality.CATEGORY_NAMES:
-                write_skill(root, category, "example")
-            write_root_aisa(root)
-
-            issues = catalog_quality.check_skill_contracts(root)
-            counts = catalog_quality._current_counts(root)
-            root_count = catalog_quality._root_skill_count(root)
-
-        self.assertEqual(issues, set())
-        self.assertEqual(counts["search-research"], 1)
-        self.assertNotIn("aisa", counts)
-        self.assertEqual(sum(counts.values()), len(catalog_quality.CATEGORY_NAMES))
-        self.assertEqual(root_count, 1)
-
-    def test_unsupported_root_and_nested_aisa_locations_are_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            for category in catalog_quality.CATEGORY_NAMES:
-                (root / category).mkdir()
-            write_skill(root, "platform", "aisa")
-            nested = root / "aisa" / "nested"
-            nested.mkdir(parents=True)
-            (nested / "SKILL.md").write_text(
-                "---\nname: nested\ndescription: no\n---\n# nested\n",
-                encoding="utf-8",
-            )
-            extra = root / "tools"
-            extra.mkdir()
-            (extra / "SKILL.md").write_text(
-                "---\nname: tools\ndescription: no\n---\n# tools\n",
-                encoding="utf-8",
-            )
-
-            issues = catalog_quality.check_skill_contracts(root)
-
-        self.assertIn("structure:invalid-skill-path:platform/aisa/SKILL.md", issues)
-        self.assertIn("structure:invalid-skill-path:aisa/nested/SKILL.md", issues)
-        self.assertIn("structure:root-skill:tools", issues)
-        self.assertIn("structure:missing-skill-file:aisa", issues)
-
-    def test_root_aisa_does_not_change_category_export_counts(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            for category in catalog_quality.CATEGORY_NAMES:
-                write_skill(root, category, "example")
-            write_root_aisa(root)
-            write_copy_exporter(root)
-
-            issues = catalog_quality.check_exports(
-                root, {category: 1 for category in catalog_quality.CATEGORY_NAMES}
-            )
-            counts = catalog_quality._current_counts(root)
-
-        self.assertEqual(issues, set())
-        self.assertEqual(counts["search-research"], 1)
-        self.assertEqual(sum(counts.values()), len(catalog_quality.CATEGORY_NAMES))
 
 
 class WorkflowContractTests(unittest.TestCase):

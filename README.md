@@ -5,36 +5,16 @@ Production-ready skills for autonomous agents, compatible with any
 OpenAI Codex, Cursor, Gemini CLI, OpenCode, Goose, OpenClaw, Hermes,
 and others that implement the [Agent Skills specification](https://agentskills.io/specification).
 
-Skills are grouped by business domain. Each skill directory remains a
+Skills are grouped by category. Each skill directory remains a
 self-contained bundle with a `SKILL.md`, optional human-facing `README.md`,
 and supporting scripts. One `AISA_API_KEY` covers AIsa-powered skills.
-The generic AIsa Skill lives at the repository root (`aisa/`), not in a
-domain category.
-
-## General Skill
-
-| Skill | Description |
-|---|---|
-| [aisa](./aisa/) | Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools or sign-in, or needs current web, company, or social data AIsa tools can fetch—even if they do not name AIsa. |
-
-The default installer entry is this Skill:
-
-```sh
-npx skills add AIsa-team/agent-skills --skill aisa --agent codex
-```
-
-Vercel `skills@1.5.25` stops after the root `aisa` Skill (`Found 1 skill`). Domain Skills in this aggregate repo need `--full-depth`, for example:
-
-```sh
-npx skills add AIsa-team/agent-skills --full-depth --skill market --agent codex
-```
-
-Or install from an existing category export. Do not flatten or duplicate Skills to change shallow discovery.
+The generic AIsa Skill is the platform entry at [`platform/aisa/`](./platform/aisa/).
 
 ## Catalog
 
 | Category | Skills | Description |
 |---|---:|---|
+| [Platform](./platform/) | 1 | Generic AIsa CLI and MCP entry for published tools. |
 | [Financial & Markets](./financial/) | 15 | Market data, stock research, portfolio tracking, prediction markets, and financial forecasting. |
 | [Search & Research](./search-research/) | 12 | Web, academic, Tavily, Perplexity, and recent multi-source research workflows. |
 | [Social Media](./social-media/) | 9 | Twitter/X intelligence and engagement plus YouTube discovery and SERP research. |
@@ -43,6 +23,12 @@ Or install from an existing category export. Do not flatten or duplicate Skills 
 | [Creative](./creative/) | 1 | Image and video generation workflows. |
 
 ## Skills
+
+### [Platform](./platform/)
+
+| Skill | Description |
+|---|---|
+| [aisa](./platform/aisa/) | Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools or sign-in, or needs current web, company, or social data AIsa tools can fetch—even if they do not name AIsa. |
 
 ### [Financial & Markets](./financial/)
 
@@ -119,6 +105,6 @@ Or install from an existing category export. Do not flatten or duplicate Skills 
 
 ## Review Note
 
-This catalog contains 44 skills: 43 domain skills plus 1 general Skill at [`aisa/`](./aisa/).
+This catalog contains 44 skills: 1 platform Skill plus 43 domain skills.
 Subset skills are intentionally retained as separate discovery and entry points.
 The merge analysis is in [SKILL_DEDUP_ANALYSIS.md](./SKILL_DEDUP_ANALYSIS.md).

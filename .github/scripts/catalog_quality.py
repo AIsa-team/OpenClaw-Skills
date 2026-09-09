@@ -22,10 +22,10 @@ CATEGORY_NAMES = (
     "creative",
     "financial",
     "marketing",
+    "platform",
     "search-research",
     "social-media",
 )
-ROOT_SKILL_NAME = "aisa"
 IGNORED_DIRECTORIES = {".git", ".github", ".hermes", ".venv", "__pycache__"}
 CREDENTIAL_IGNORED_DIRECTORIES = {".git", ".hermes", ".venv", "__pycache__"}
 MARKDOWN_LINK_RE = re.compile(
@@ -71,18 +71,6 @@ def _current_counts(root: Path) -> dict[str, int]:
         if len(relative.parts) == 3 and relative.parts[0] in counts:
             counts[relative.parts[0]] += 1
     return counts
-
-
-def _is_root_aisa_skill(relative: Path) -> bool:
-    return (
-        len(relative.parts) == 2
-        and relative.parts[0] == ROOT_SKILL_NAME
-        and relative.name == "SKILL.md"
-    )
-
-
-def _root_skill_count(root: Path) -> int:
-    return 1 if (root / ROOT_SKILL_NAME / "SKILL.md").is_file() else 0
 
 
 def repository_symlinks(root: Path) -> set[str]:
@@ -132,8 +120,6 @@ def check_skill_contracts(root: Path) -> set[str]:
         relative = skill_file.relative_to(root)
         if skill_file.name != "SKILL.md":
             issues.add(f"structure:noncanonical-skill-file:{relative.as_posix()}")
-        if _is_root_aisa_skill(relative):
-            continue
         if len(relative.parts) == 2:
             issues.add(f"structure:root-skill:{skill_file.parent.name}")
         elif len(relative.parts) != 3 or relative.parts[0] not in CATEGORY_NAMES:
@@ -143,10 +129,6 @@ def check_skill_contracts(root: Path) -> set[str]:
         if not child.is_dir() or child.name.startswith("."):
             continue
         if child.name in CATEGORY_NAMES or child.name in IGNORED_DIRECTORIES:
-            continue
-        if child.name == ROOT_SKILL_NAME:
-            if not (child / "SKILL.md").is_file():
-                issues.add(f"structure:missing-skill-file:{ROOT_SKILL_NAME}")
             continue
         if (child / "SKILL.md").exists():
             issues.add(f"structure:root-skill:{child.name}")
@@ -378,11 +360,6 @@ def _changed_skill_dirs(root: Path, changed_files: Iterable[Path]) -> set[Path]:
             relative = path.relative_to(root)
         except ValueError:
             continue
-        if relative.parts and relative.parts[0] == ROOT_SKILL_NAME:
-            skill_dir = root / ROOT_SKILL_NAME
-            if (skill_dir / "SKILL.md").is_file():
-                skill_dirs.add(skill_dir)
-            continue
         if len(relative.parts) >= 2 and relative.parts[0] in CATEGORY_NAMES:
             skill_dir = root / relative.parts[0] / relative.parts[1]
             if (skill_dir / "SKILL.md").is_file():
@@ -450,8 +427,7 @@ def main() -> int:
         issues = collect_global_issues(root) | collect_changed_issues(root, changed_files)
         print(f"scope=changed files={len(changed_files)}")
 
-    counts = _current_counts(root)
-    print(f"skills={sum(counts.values()) + _root_skill_count(root)}")
+    print(f"skills={sum(_current_counts(root).values())}")
     if not issues:
         print("Catalog quality checks passed")
         return 0
