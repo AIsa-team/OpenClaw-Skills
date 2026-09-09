@@ -2,11 +2,10 @@
 
 Web, academic, Tavily, Perplexity, and recent multi-source research workflows.
 
-This category contains 13 self-contained Agent Skills.
+This category contains 12 self-contained Agent Skills.
 
 | Skill | Description |
 |---|---|
-| [aisa](./aisa/) | Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools or sign-in, or needs current web, company, or social data AIsa tools can fetch—even if they do not name AIsa. |
 | [multi-source-search](./multi-source-search/) | Multi-source intelligent search for agents. Retrieval across web, scholar, Tavily, and Perplexity Sonar models. |
 | [multi-search](./multi-search/) | Parallel multi-source search combining Web, Scholar, Smart, and Tavily results with confidence scoring and AI synthesis. Best for comprehensive research requiring cross-source validation. Use when: the user needs web search, research, source discovery, or content extraction. |
 | [smart-search](./smart-search/) | Intelligent hybrid search combining web and academic sources via AIsa Smart Search endpoint. Best when you need both web and scholarly results. Use when: the user needs web search, research, source discovery, or content extraction. |

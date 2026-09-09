@@ -6,9 +6,10 @@ with a few house-level requirements on top.
 
 ## TL;DR
 
-1. Skill lives in `<category>/<skill-name>/`, where `<category>` is one of
+1. Domain skills live in `<category>/<skill-name>/`, where `<category>` is one of
    `financial`, `search-research`, `social-media`, `ai-models`, `marketing`,
-   or `creative`.
+   or `creative`. The one generic platform Skill lives at repository-root
+   `aisa/` (slug `aisa`). Do not add a `general` or `platform` category.
 2. `SKILL.md` frontmatter must be **spec-compliant** (validate with
    [`skills-ref`](https://github.com/agentskills/agentskills/tree/main/skills-ref)
    before merging).
@@ -31,10 +32,17 @@ with a few house-level requirements on top.
     ├── references/   # optional — long-form docs the agent loads on demand
     ├── assets/       # optional — static resources (templates, data, images)
     └── ...
+
+aisa/                  # one root-level platform Skill (not a domain category)
+├── SKILL.md
+├── LICENSE
+└── agents/           # optional product-specific config
 ```
 
 Use the narrowest matching business category. Adding a new top-level category
-requires updating the root README and the corresponding sync workflow.
+requires updating the root README and the corresponding sync workflow. The
+root `aisa/` entry is the only exception to the category layout; do not copy
+it into a domain folder and do not create extra root-level Skills.
 
 Directory name rules (enforced by the spec):
 

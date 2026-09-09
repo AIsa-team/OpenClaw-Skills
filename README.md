@@ -8,13 +8,21 @@ and others that implement the [Agent Skills specification](https://agentskills.i
 Skills are grouped by business domain. Each skill directory remains a
 self-contained bundle with a `SKILL.md`, optional human-facing `README.md`,
 and supporting scripts. One `AISA_API_KEY` covers AIsa-powered skills.
+The generic AIsa Skill lives at the repository root (`aisa/`), not in a
+domain category.
+
+## General Skill
+
+| Skill | Description |
+|---|---|
+| [aisa](./aisa/) | Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools or sign-in, or needs current web, company, or social data AIsa tools can fetch—even if they do not name AIsa. |
 
 ## Catalog
 
 | Category | Skills | Description |
 |---|---:|---|
 | [Financial & Markets](./financial/) | 15 | Market data, stock research, portfolio tracking, prediction markets, and financial forecasting. |
-| [Search & Research](./search-research/) | 13 | Web, academic, Tavily, Perplexity, and recent multi-source research workflows. |
+| [Search & Research](./search-research/) | 12 | Web, academic, Tavily, Perplexity, and recent multi-source research workflows. |
 | [Social Media](./social-media/) | 9 | Twitter/X intelligence and engagement plus YouTube discovery and SERP research. |
 | [AI Models](./ai-models/) | 3 | AIsa provider setup and unified model routing for Chinese and global LLMs. |
 | [Marketing](./marketing/) | 3 | SEO research, article SEO + GEO review, and creator/KOL discovery workflows. |
@@ -46,7 +54,6 @@ and supporting scripts. One `AISA_API_KEY` covers AIsa-powered skills.
 
 | Skill | Description |
 |---|---|
-| [aisa](./search-research/aisa/) | Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools or sign-in, or needs current web, company, or social data AIsa tools can fetch—even if they do not name AIsa. |
 | [multi-source-search](./search-research/multi-source-search/) | Multi-source intelligent search for agents. Retrieval across web, scholar, Tavily, and Perplexity Sonar models. |
 | [multi-search](./search-research/multi-search/) | Parallel multi-source search combining Web, Scholar, Smart, and Tavily results with confidence scoring and AI synthesis. Best for comprehensive research requiring cross-source validation. Use when: the user needs web search, research, source discovery, or content extraction. |
 | [smart-search](./search-research/smart-search/) | Intelligent hybrid search combining web and academic sources via AIsa Smart Search endpoint. Best when you need both web and scholarly results. Use when: the user needs web search, research, source discovery, or content extraction. |
@@ -98,6 +105,6 @@ and supporting scripts. One `AISA_API_KEY` covers AIsa-powered skills.
 
 ## Review Note
 
-This catalog contains 44 skills after removing only same-function aliases and repackages.
+This catalog contains 44 skills: 43 domain skills plus 1 general Skill at [`aisa/`](./aisa/).
 Subset skills are intentionally retained as separate discovery and entry points.
 The merge analysis is in [SKILL_DEDUP_ANALYSIS.md](./SKILL_DEDUP_ANALYSIS.md).
