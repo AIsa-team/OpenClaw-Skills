@@ -1,6 +1,6 @@
 ---
 name: aisa
-description: "Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools, AIsa search/quote/call, or to sign in to AIsa. Do not use for OpenClaw Chinese model provider setup (aisa-provider) or for installing other catalog skills."
+description: "Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools or sign-in, or needs current web, company, or social data AIsa tools can fetch—even if they do not name AIsa. Do not use for OpenClaw Chinese model provider setup (aisa-provider), installing other catalog skills, or work that does not need live AIsa data."
 license: MIT
 ---
 
@@ -20,7 +20,7 @@ Optional `--global`. Never `--all`, `--agent '*'`, or `--skill '*'`. Not `aisa s
 
 If `aisa` is missing, install `@aisa-one/cli` once (`npm install -g @aisa-one/cli`). Do not reinstall or upgrade every task. Verified floor: **0.5.0**. Repair only when setup is actually broken: https://aisa.one/docs/agent-quickstart.md
 
-**Auth.** Reuse existing credentials. If unsigned-in, run `aisa login` — browser OAuth mints and stores a CLI key. Use `aisa login --no-browser` only when this machine cannot finish a local browser redirect; paste the one-time redirect/code back. Do not send the user to copy a key. `AISA_API_KEY` overrides the stored key; if they conflict, explain the source and leave custom setup alone. `aisa whoami` is local only. Prove auth with a real read (`aisa balance`, or search/schema). Never print credentials. Failed login → retry `aisa login`. No credit → top up, not “missing key”.
+**Auth.** Reuse existing credentials. If unsigned-in, run `aisa login` — browser OAuth mints and stores a CLI key. Use `aisa login --no-browser` only when this machine cannot finish a local browser redirect; paste the one-time redirect/code back. Do not send the user to copy a key. `AISA_API_KEY` overrides the stored key; if they conflict, explain the source and leave custom setup alone. `aisa whoami` is local only. Search and schema may be anonymous — they are not proof of authentication. Prove CLI auth with `aisa balance`. Never print credentials. Failed login → retry `aisa login`. No credit → top up, not “missing key”.
 
 **Invoke.** `search` → `schema` when `has_full_schema` is false → `quote` → `call` inside authorized scope and spend. Take tool IDs and arguments from returned search/schema. Do not invent IDs, substitute `aisa api list`, or compute prices yourself.
 
@@ -39,7 +39,7 @@ Quote does not execute and is not approval to execute. A missing, failed, or par
 
 ## No command execution
 
-If you cannot run commands (not merely “no Bash”), connect native remote **Streamable HTTP** MCP with **OAuth** at `https://tools.aisa.one/mcp`. Map `search` → `AISA_SEARCH_TOOL`, `schema` → `AISA_BATCH_GET_SCHEMA`, `quote` → `AISA_BATCH_QUOTE`, `call` → `AISA_BATCH_USE`. The client owns browser sign-in and tokens — no manual key. If you are already reading this skill, continue over MCP; do not require a shell or `npx`. Reuse an existing unified MCP. Do not install both transports or overwrite default models. Do not treat domain MCP or `aisa connect`’s default web-search server as this Router. Setup details: https://aisa.one/docs/agent-quickstart.md
+If you cannot run commands (not merely “no Bash”), connect native remote **Streamable HTTP** MCP with **OAuth** at `https://tools.aisa.one/mcp`. Map `search` → `AISA_SEARCH_TOOL`, `schema` → `AISA_BATCH_GET_SCHEMA`, `quote` → `AISA_BATCH_QUOTE`, `call` → `AISA_BATCH_USE`. The client owns browser sign-in and tokens — no manual key. Search/schema success is not proof of OAuth. If you are already reading this skill, continue over MCP; do not require a shell or `npx`. Reuse an existing unified MCP. Do not install both transports or overwrite default models. Do not treat domain MCP or `aisa connect`’s default web-search server as this Router. Setup details: https://aisa.one/docs/agent-quickstart.md
 
 ## License
 
