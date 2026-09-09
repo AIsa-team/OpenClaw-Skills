@@ -6,9 +6,9 @@ license: MIT
 
 # AIsa
 
-Use AIsa to discover and invoke published tools for live web, company, or social data, or to sign in to AIsa. Keep this scoped to AIsa. Do not use it for OpenClaw Chinese model provider setup (`aisa-provider`), installing other catalog skills, or work that does not need live AIsa data. If the user named another tool, or a dedicated local tool already covers the job, do not force AIsa.
-
 If you are already reading this skill, continue the current task. Do not reinstall it, reread setup docs, or relogin a working connection.
+
+If the user named another tool, or a dedicated local tool already covers the job, do not force AIsa.
 
 First-time install and connect: https://aisa.one/docs/agent-quickstart.md
 
@@ -18,7 +18,7 @@ Reuse a working official `aisa` skill, `@aisa-one/cli` **0.5.0 or later**, store
 
 ## Workflow
 
-`search` → `schema` when `has_full_schema` is false → `quote` → `call` inside authorized scope and spend. Take tool IDs and arguments from search/schema. Do not invent IDs or prices. Runtime help, schema, and quote are authoritative. `--input` is inline JSON:
+`search` → `schema` when `has_full_schema` is false → `quote` → `call` inside authorized scope and spend. `quote` and `call` share the saved credentials and the same `calls` JSON shape. Take tool IDs and arguments from search/schema. Do not invent IDs or prices. Runtime help, schema, and quote are authoritative. `--input` is inline JSON:
 
 ```sh
 aisa search --input '{"query":"<user goal>"}' --json
@@ -29,7 +29,14 @@ Quote does not execute and is not approval to execute. A missing, failed, or par
 
 ## MCP fallback
 
-If you cannot run commands, or the user explicitly prefers MCP, use native remote Streamable HTTP MCP with OAuth at `https://tools.aisa.one/mcp`. Map `search` → `AISA_SEARCH_TOOL`, `schema` → `AISA_BATCH_GET_SCHEMA`, `quote` → `AISA_BATCH_QUOTE`, `call` → `AISA_BATCH_USE`. The client owns browser sign-in and tokens. Do not require `npx`. Do not treat domain MCP or `aisa connect`’s default web-search server as this router. Discovery or a 401 is not a protected call.
+If you cannot run commands, or the user explicitly prefers MCP, use native remote Streamable HTTP MCP with OAuth at `https://tools.aisa.one/mcp`. The client owns browser sign-in and tokens. Do not require `npx`. Do not treat domain MCP or `aisa connect`’s default web-search server as this router. Discovery or a 401 is not a protected call.
+
+| MCP tool | CLI command |
+| --- | --- |
+| `AISA_SEARCH_TOOL` | `aisa search` |
+| `AISA_BATCH_GET_SCHEMA` | `aisa schema` |
+| `AISA_BATCH_QUOTE` | `aisa quote` |
+| `AISA_BATCH_USE` | `aisa call` |
 
 ## License
 
