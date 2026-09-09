@@ -44,6 +44,12 @@ requires updating the root README and the corresponding sync workflow. The
 root `aisa/` entry is the only exception to the category layout; do not copy
 it into a domain folder and do not create extra root-level Skills.
 
+Installer discovery: `npx skills add AIsa-team/agent-skills --skill aisa` is the
+default main entry. `skills@1.5.25` lists only that root Skill unless you pass
+`--full-depth` (for example `--full-depth --skill market --agent codex`) or use
+a category export source. Do not add wrappers or extra copies to fake shallow
+discovery.
+
 Directory name rules (enforced by the spec):
 
 - Lowercase ASCII letters, digits, and hyphens only — `a-z 0-9 -`

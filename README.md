@@ -17,6 +17,20 @@ domain category.
 |---|---|
 | [aisa](./aisa/) | Discover and invoke published AIsa tools with the AIsa CLI (search, schema, quote, call) or unified MCP. Use when the user wants AIsa tools or sign-in, or needs current web, company, or social data AIsa tools can fetch—even if they do not name AIsa. |
 
+The default installer entry is this Skill:
+
+```sh
+npx skills add AIsa-team/agent-skills --skill aisa --agent codex
+```
+
+Vercel `skills@1.5.25` stops after the root `aisa` Skill (`Found 1 skill`). Domain Skills in this aggregate repo need `--full-depth`, for example:
+
+```sh
+npx skills add AIsa-team/agent-skills --full-depth --skill market --agent codex
+```
+
+Or install from an existing category export. Do not flatten or duplicate Skills to change shallow discovery.
+
 ## Catalog
 
 | Category | Skills | Description |
