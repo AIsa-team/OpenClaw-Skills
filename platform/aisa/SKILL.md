@@ -14,7 +14,11 @@ First-time install and connect: https://aisa.one/docs/agent-quickstart.md
 
 ## Reuse
 
-Reuse a working official `aisa` skill, `@aisa-one/cli` **0.5.0 or later**, stored CLI credentials, or a unified MCP session. Prefer the CLI in any working terminal (PowerShell counts; Bash is not required). `AISA_API_KEY` overrides the stored key; if they conflict, explain the sources and leave custom setup alone. Never print credentials. `aisa whoami` is local only. Search and schema may be anonymous — they are not auth proof. Prove CLI auth with `aisa balance`. Failed login → `aisa login`. No credit → top up, not “missing key”.
+Reuse a working official `aisa` skill, `@aisa-one/cli` **0.5.0 or later**, stored CLI credentials, or a unified MCP session. Prefer the CLI in any working terminal (PowerShell counts; Bash is not required). `AISA_API_KEY` overrides the stored key; if they conflict, explain the sources and leave custom setup alone. Never print credentials. `aisa whoami` is local only. Search and schema may be anonymous — they are not auth proof.
+
+## Sign-in
+
+Prove CLI auth with `aisa balance`. Before replying to a sign-in message or writing to its terminal, read `aisa login --help`. Follow it to interpret the CLI prompt and relay only the requested authorization result through the existing process. No credit → top up, not “missing key”.
 
 ## Workflow
 
