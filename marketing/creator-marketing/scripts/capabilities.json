@@ -1,0 +1,80 @@
+{
+  "search": {
+    "tool": "post_tavily_search",
+    "defaults": {
+      "search_depth": "basic",
+      "max_results": 5,
+      "include_answer": false,
+      "include_raw_content": false,
+      "include_images": false,
+      "auto_parameters": false
+    },
+    "allowed": [
+      "query",
+      "max_results",
+      "topic",
+      "time_range",
+      "include_domains",
+      "exclude_domains"
+    ]
+  },
+  "extract": {
+    "tool": "post_tavily_extract",
+    "defaults": {
+      "extract_depth": "basic",
+      "format": "markdown",
+      "include_images": false
+    },
+    "allowed": [
+      "urls",
+      "query"
+    ]
+  },
+  "similar": {
+    "tool": "post_waveinflu_similar_creators",
+    "defaults": {
+      "limit": 5
+    },
+    "allowed": [
+      "platform",
+      "contentDirection",
+      "seedProfileUrl",
+      "filters",
+      "limit"
+    ]
+  },
+  "email": {
+    "tool": "post_waveinflu_email_lookup",
+    "defaults": {},
+    "allowed": [
+      "url"
+    ]
+  },
+  "instagram-profile": {
+    "tool": "get_instagram_profile",
+    "defaults": {},
+    "allowed": [
+      "handle"
+    ]
+  },
+  "instagram-posts": {
+    "tool": "get_instagram_user_posts",
+    "defaults": {
+      "trim": true
+    },
+    "allowed": [
+      "handle"
+    ]
+  },
+  "youtube-search": {
+    "tool": "get_youtube_search",
+    "defaults": {
+      "engine": "youtube"
+    },
+    "allowed": [
+      "q",
+      "gl",
+      "hl"
+    ]
+  }
+}
