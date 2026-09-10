@@ -219,6 +219,14 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
+def skill_user_agent():
+    frontmatter = (Path(__file__).resolve().parents[1] / 'SKILL.md').read_text().split('---', 2)[1]
+    name = re.search(r'^name: ([a-z0-9-]+)$', frontmatter, re.M)
+    version = re.search(r'^  version: "([0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?)"$', frontmatter, re.M)
+    require(name is not None and version is not None, 'invalid_skill_metadata')
+    return f'aisa-skill/{version[1]} (skill={name[1]})'
+
+
 def python_request(kind, payload):
     require(kind in ROUTES, 'unknown_router_method')
     key = os.environ.get('AISA_API_KEY', '').strip()
@@ -228,7 +236,7 @@ def python_request(kind, payload):
         HOST + ROUTES[kind],
         data=json.dumps(payload, allow_nan=False).encode('utf-8'),
         headers={'Content-Type': 'application/json', 'Accept': 'application/json',
-                 'Authorization': 'Bearer ' + key}, method='POST')
+                 'Authorization': 'Bearer ' + key, 'User-Agent': skill_user_agent()}, method='POST')
     opener = urllib.request.build_opener(NoRedirect())
     try:
         try:
