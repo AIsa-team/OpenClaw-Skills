@@ -1,0 +1,20 @@
+# AIsa × Similarweb — protocol for agents (verified 2026-09-13)
+Base `https://api.aisa.one/apis/v1/similarweb` · header `Authorization: Bearer $AISA_API_KEY` · the account needs the Hive GTM subscription.
+COST RULE — never state or assume a price. Prices come only from a quote (before a call) or the cost header (after).
+CONTRACT RULE — never assume a parameter. Build every request from the live contract.
+DISCOVER — at session start, and again whenever a request built from the contract is rejected
+1. Contract (public): GET `https://aisa.one/docs/openapi/similarweb.json`. Cache it with its ETag and revalidate with `If-None-Match` (304 = unchanged). On MCP, `tools/list` on `https://mcp.aisa.one/similarweb/mcp` returns the same schemas.
+2. For each route read its required parameters, enums, defaults and maximums, and its description — date-window rules are written there.
+3. Latest month M (free): take the route whose description requires the latest month (today `/website/technologies`), send its required parameters with the dates set to `2000-01` → 400 whose `meta.error_message` names the allowed month.
+CALL — every request, in order
+4. Build the smallest request that answers the question: the fewest months, metrics and rows the contract allows.
+5. Quote it (free): same request + header `X-AISA-Cost-Mode: quote` → `estimated_cost_micros_usd` (1000000 = $1). A 400 on a contract-built request means the contract changed: re-fetch (step 1) and rebuild.
+6. Before widening scope (months, metrics, rows, domains), quote the wider variant too; pick the one that answers the question at the lowest quote.
+7. Show the user the quote; if it exceeds their budget (ask for one if none is set), wait for approval.
+8. Call with headers `X-AISA-Max-Price-USD: <approved USD>` and `Idempotency-Key: <uuid>`. 402 = estimate above the cap, 409 = key already used; neither is billed.
+9. Report the cost from response header `x-aisa-customer-cost-micros-usd` and the data month (`meta.last_updated` or `meta.end_date`). Reconcile spend with GET `https://api.aisa.one/v1/usage?start_time=<unix>`.
+READING RESPONSES — the errors below are not billed
+- 400 with `meta.error_message` on a real call: a date-window rule that quotes do not check. The message states the rule or the allowed range; use it to fix the dates and retry.
+- 400 with `error.supported`: `error.message` names the parameter and `supported` lists the valid values.
+- 503 with `retryable: true`: retry once with a new Idempotency-Key. Never retry a 200.
+- Make paid calls over REST: that is where the cost header is returned.
