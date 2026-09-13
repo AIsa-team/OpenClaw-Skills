@@ -1,5 +1,5 @@
 ---
-name: aisa-similarweb
+name: use-similarweb
 description: "Use this skill whenever a user or agent needs Similarweb website intelligence through AIsa — monthly visits and engagement for a domain, traffic trend, country/category rank, PPC spend, marketing channels, referrals, ad networks, similar sites, demographics, deduplicated audience, audience interest and overlap, technologies, popular pages, subdomains, keyword competitors, website keywords, SERP players, landing pages, top geographies. It holds no parameters and no prices: it reads the live API contract to build and validate every request, finds the latest data month, quotes each request for free, compares scope variants, gets approval against the user's budget, caps spend with a header, and reports the actual cost. Keywords - similarweb, website traffic, domain traffic, competitor traffic, traffic sources, audience overlap, keyword competitors, aisa, openapi contract, quote, budget."
 license: MIT
 compatibility: "Works with any agentskills.io-compatible harness (Claude Code, Claude, OpenCode, Cursor, Codex, Gemini CLI, OpenClaw, Hermes, Goose). Requires Python 3 and AISA_API_KEY on an account with the Hive GTM subscription."
